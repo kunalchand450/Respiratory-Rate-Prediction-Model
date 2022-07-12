@@ -1,0 +1,242 @@
+only ppg data given, shall i use synthetic data to train my models and then predict rr using the given ppg
+do you have respiratory rate data along with the scan ids
+
+notes:-
+Signal Processing			Filter-based Feature-based
+BW: Band-pass filter 			BW: mean amplitude of troughs and proceeding peaks
+AM: Continuous Wavelet Transform 	AM: Difference between amplitudes of troughs and proceeding peaks
+FM: Continuous Wavelet Transform 	FM: time interval between consecutive peaks
+					BW: mean signal value between consecutive troughs
+					BW, AM: peak amplitude
+					BW, AM: trough amplitude
+					FM: QRS duration
+					AM, FM: QRS area
+					BW: Principal component analysis
+					FM: PPG pulse width
+					AM, FM: QR slope
+					AM, FM: RS slope
+					AM, FM: QRS angle
+
+
+PPG Measurement Site
+
+Modulation Finger vs Ear CCs
+XA1 		Finger
+XA2 		NS
+XA3 		NS
+XB1 		Finger
+XB2		 NS
+XB3 		Finger
+XB4 		Finger
+XB5 		Finger
+XB6 		Finger
+XB9		 NS
+XB10		 Finger
+
+
+
+
+Modulation Clinical vs Lab PPG CCs
+XA1 Clinical
+XA2 NS
+XA3 Lab
+XB1 Clinical
+XB2 Lab
+XB3 Clinical
+XB4 NS
+XB5 NS
+XB6 Clinical
+XB9 NS
+XB10 NS
+
+
+
+Modulation Clinical vs Lab ECG CCs
+-XA1 NS
+XA2 Clinical
+XA3 NS
+XB1 Clinical
+XB2 NS
+XB3 NS
+XB4 NS
+XB5 Clinical
+XB6 NS
+XB7 NS
+XB8 NS
+XB9 NS
+XB11 NS
+XB12 NS
+XB13 NS
+
+
+Recommendations
+• Device design recommendations:
+– Finger PPG rather than ear,
+– Clinical equipment acceptable, and
+– ECG superior to PPG
+– ECG sampling frequency ≥ 250 Hz
+– PPG sampling frequency ≥ 16 Hz
+• Clinical considerations:
+– FM-based PPG modulation reduced in elderly
+– No differences between men and women
+– Qualities of modulations reduced at higher BRs
+
+
+Algorithims obtained for desired set is.(3)
+
+XB1,2,3ET4FM1
+
+XB1,2,3ET1FM1
+
+XB1,2,3ET1FM1FT1
+
+
+* Baseline Wander (BW),
+
+* Amplitude Modulation (AM), or
+
+* Frequency Modulation (FM).
+
+Table 1.
+
+Techniques for extraction of respiratory signals.
+Abbr.	Technique
+	Filter-Based, XA1,…,4
+XA1	BW: Band-pass filter between 4 and 60 bpm (Lindberg et al 1992).
+XA2	AM: The maximum amplitude of the Continuous Wavelet Transform (CWT) within plausible cardiac frequencies (30–220 beats per minute) (Addison and Watson 2004).
+XA3	FM: The frequency corresponding to the maximum amplitude of the CWT within plausible cardiac frequencies (Addison and Watson 2004).
+XA4	BW, AM, FM: Filter using the centred-correntropy function (CCF) (Garde et al 2014).
+	Feature-Based, XB1,…,8
+XB1	BW: mean amplitude of troughs and proceeding peaks.
+XB2	AM: difference between the amplitudes of troughs and proceeding peaks (Karlen et al 2013).
+XB3	FM: time interval between consecutive peaks (Orphanidou et al 2013, Karlen et al 2013).
+XB4	BW: mean signal value between consecutive troughs (Ruangsuwana et al 2010).
+XB5	BW, AM: peak amplitude (Karlen et al 2013).
+XB6	BW, AM: trough amplitude (Ruangsuwana et al 2010).
+XB7	FM: QRS duration (Rajkumar and Ramya 2013). Q and S waves were identified as the minima immediately before and after the R wave (Ruangsuwana et al 2010).
+XB8	AM, FM: QRS area (Sobron et al 2010), defined as the integral of the ECG between Q and S waves after subtraction of a baseline linearly interpolated between Q and S waves.
+
+Table 2.
+
+Techniques for respiratory rate estimation.
+Abbr.	Technique
+	Frequency-based, EF1,…,5
+EF1	Fast Fourier transform spectral analysis (Karlen et al 2013).
+EF2	Auto-regressive spectral analysis (Thayer et al 2002) using model order 8 (Orphanidou et al 2013).
+EF3	Auto-regressive spectral analysis using the median spectrum for model orders 2–20 (Shah et al 2015).
+EF4	Auto-regressive all-pole modelling (order 8), with the highest magnitude pole selected as the respiratory pole (Fleming et al 2008).
+EF5	Auto-regressive all-pole modelling (order 8), with the lowest frequency pole selected as the respiratory pole (Fleming and Tarassenko 2006).
+EF6	Find periodicity using the autocorrelation function (Schäfer and Kratky 2008).
+EF7	Spectral analysis using the Welch periodogram (Lázaro Plaza 2015).
+	Time-domain breath detection, ET1,…,5
+ET1	Breath detection by peak detection (Shah 2012).
+ET2	Breath detection by positive gradient zero-crossing detection (Johansson 2003).
+ET3	Breath detection by combined peak and trough detection (Fleming 2010): elimination of peaks less than the mean, and troughs greater than the mean; elimination of peaks (and troughs) within 0.5s of the previous peak (or trough); elimination of peaks (and troughs) which are immediately followed by a peak (or trough).
+ET4	Breath detection using ‘Count-orig’ (Schäfer and Kratky 2008): detrend; detect peaks and troughs; define a threshold as 0.2 times the 75th percentile of peak values; ignore peaks with an amplitude below this threshold; identify valid breaths as consecutive peaks separated by only one trough with an amplitude less than zero.
+ET5	Breath detection using ‘Count-adv’ (Schäfer and Kratky 2008): detrend; detect peaks and troughs; define a threshold as 0.3 times the 75th percentile of amplitude differences between consecutive extrema; eliminate the pair of extrema with the smallest amplitude difference if this is below the threshold; repeat until no more pairs can be eliminated; remaining peaks represent breaths.
+
+Table 3.
+
+Techniques for fusion of RR estimates.
+Abbr.	Technique
+	Modulation, FM1,…,4
+FM1	Smart fusion (Karlen et al 2013): RRs estimated from BW, AM and FM respiratory signals (XB1,2,3) are quality assessed. If their standard deviation is  ⩽ 4 bpm then RR is estimated as the mean, otherwise no RR is output.
+FM2	Spectral peak-conditioned averaging (Lázaro Plaza 2015): Frequency spectra calculated from BW, AM and FM respiratory signals (XB1,2,3) using the Welch periodogram (FT7) are fused to give a mean spectrum. Only those spectra for which a certain proportion of spectral power is contained within a frequency range centred on the frequency corresponding to the maximum spectral power are included (a modification of the reported method). RR is estimated as the frequency corresponding to the maximum power in the mean spectrum.
+FM3	Pole magnitude criterion (Orphanidou et al 2013): The respiratory pole is chosen as the highest magnitude pole obtained from auto-regressive spectral analysis of BW, AM and FM respiratory signals (XB1,2,3).
+FM4	Pole ranking criterion (Orphanidou et al 2009a): The pair of highest magnitude poles obtained from auto-regressive spectral analysis of BW, AM and FM respiratory signals (XB1,2,3) with the greatest pole ranking criterion (PRC) is selected. PRC=mi,j¯¯¯¯¯¯/dθi,j2, where mi,j¯¯¯¯¯¯=(mi+mj)/2 and dθi,j =  |θi − θj|, for i, j = 1, …, N, where N is the number of poles calculated. θ and m are the pole angles and magnitudes respectively. RR is estimated from the mean frequency corresponding to the selected pair.
+	Temporal, FT1
+FT1	Temporal smoothing (Lázaro et al 2013): estimated RRs, RRest, are smoothed to give the final RR, RRi, using RRi = 0.2RRest + 0.8RRi−1.
+
+
+
+
+Table 4.
+
+Performances of the ten highest ranked algorithms for the ECG and PPG, and of IP-Derived RR: Ranked by 2SD followed by absolute bias.
+Signal	Algorithm	Overall rank	2SD (bpm)	Bias (bpm)	95% LOA (bpm)	Proportion of windows with RR estimate (%)	CP2 (%)
+IP	Clinical monitor	 5	5.4	−0.2	−5.6 to 5.2	100.0	76.0
+	XB1,2,3ET4FM1	 1	4.7	 0.0	−4.7 to 4.7	 73.8	80.5
+	XB1,2,3 ET2 FM1	 2	5.2	 1.4	−3.8 to 6.4	 72.3	72.6
+	XB1,2,3ET5 FM1	 3	5.2	 2.0	−3.3 to 7.2	 75.4	69.1
+ECG	XB1,2,3ET3 FM1	 4	5.3	 1.4	−3.8 to 6.7	 72.5	73.0
+	XB2ET2	 6	5.6	−0.2	−5.8 to 5.4	100.0	75.2
+	XB2ET3	 7	5.7	−0.2	−5.9 to 5.4	100.0	74.3
+	XB2ET2 FT1	 8	5.7	−0.2	−6 to 5.5	100.0	69.3
+	XB2ET5	 9	5.7	 0.5	−5.2 to 6.3	100.0	74.9
+	XB2ET3 FT1	10	5.8	−0.2	−6.0 to 5.6	100.0	69.8
+	XB1,2,3ET4FM1FT1	11	5.9	 0.0	−5.9 to 6.0	100.0	66.6
+	XB1,2,3ET4 FM1	15	6.2	 1.0	−5.1 to 7.2	 54.2	71.5
+	XB1,2,3ET1 FM1	17	6.5	−1.0	−7.5 to 5.5	 62.1	62.1
+	XB1,2,3ET1 FM1FT1	35	7.0	−1.3	−8.3 to 5.7	100.0	54.2
+PPG	XB2ET5 FT1	46	7.5	 3.0	−4.5 to 10.5	100.0	44.3
+	XB5ET1 FT1	48	7.6	 0.7	−6.9 to 8.3	100.0	57.0
+	XB2ET2 FT1	53	7.6	 2.7	−4.9 to 10.3	100.0	47.2
+	XB1,2,3 ET4 FM1 FT1	54	7.8	 1.1	−6.8 to 8.9	 97.3	57.2
+	XB1,2,3 ET5 FM1	55	7.8	 3.8	−4.0 to 11.5	 70.9	49.8
+	XB2ET4 FT1	56	7.9	 0.3	−7.7 to 8.2	100.0	60.5
+	XB1,2,3 ET2 FM1 FT1	58	7.9	 3.7	−4.2 to 11.5	100.0	60.5
+
+
+
+
+
+6. Conclusion
+We assessed the performances of 314 algorithms for estimation of RR from the ECG and PPG 
+under ideal operating conditions including many novel algorithms. The top ranked method 
+Physiol. Meas. 37 (2016) 610 P H Charlton et al
+624
+was X E B1,2,3 T4 FM1( ) ECG . Four algorithms performed better than IP, the current clinical standard for non-invasive RR measurement, when operating on the ECG. This suggests that ECGbased algorithms may perform sufficiently well for use in particular clinical scenarios.
+The conclusions of this study can be used to inform the design of wearable sensors which 
+incorporate an algorithm to estimate RR from the ECG or PPG. Firstly, algorithms were typically 
+more precise when using the ECG than the PPG, suggesting that preference should be given to 
+using the ECG to estimate RR. Secondly, we recommend using a time-domain RR estimation 
+technique, rather than a frequency-domain technique, since the best-performing algorithms used 
+time-domain techniques. Thirdly, we recommend using a modulation fusion technique to fuse 
+estimates corresponding to the three respiratory modulations, for the same reason.
+Future work is required to investigate the generalisability of these conclusions. In particular, it is important to determine whether algorithm performance is significantly influenced 
+by artifact, recording equipment and subjects’ physiology.
+This study provides a publicly available toolbox of algorithms and data to enable future 
+authors to perform reproducible and easily-compared assessments of novel algorithms. 
+The toolbox of algorithms and data is available at: http://peterhcharlton.github.io/RRest. We 
+welcome developments to the existing code or contributions of new algorithms for inclusion 
+in future versions of the toolkit
+
+
+
+
+
+
+
+Real-time extraction of the respiratory rate from 
+photoplethysmographic signals using wearable devices
+
+
+The extraction of the respiratory rate from the PPG signal has been achieved by 
+several methods. Most studies use the Fast Fourier Transform (FFT) [10-12], but this 
+requires a long time period to process the data. Digital filtering methods described by 
+Nilsson et al. [13, 14] and Nakajima et al. [15], as well as the wavelet decomposition 
+described by Addison et al. [16, 17], are other methods that have been used. Nilsson 
+et al. proposed the use of a 3rd order Butterworth band-pass filter in their study, with 
+a pass-band 0.1-0.3Hz, corresponding to 6-18 breaths per minute. They reported an 
+average error of less than 0.5 breaths per minute. Addison et al. [16] developed a 
+complex Matlab algorithm, using the wavelet transform to extract a breathing waveform from the PPG signal with an average error about 1 breath per minute. Better 
+results have been obtained using an autoregressive (AR) modeling method [18], for 
+which the mean error is 0.04.
+
+
+
+Another approach presents the possibility of extracting respiratory information 
+from derived PPG features, such as pulse width variability (PWV), pulse amplitude 
+variability (PAV), pulse rate variability (PRV) and the PPG pulse envelope [2, 11,
+19]. Lazaro et al. [19] presented in their paper a method to estimate the respiratory 
+rate from PAV, PWV, and PRV using a spectrum-based algorithm [20]. The respiratory rate was extracted from the presented features independently, and also after a 
+data fusion of these features [2, 19].
+
+pulse width variability (PWV)
+pulse amplitude variability (PAV), 
+pulse rate variability (PRV) 
+
+The respiratory rate modulates the PPG signal in three ways. For example, the 
+pulse wave amplitude is affected by blood vessels flexibility. During expiration our 
+blood vessels are more flexible than during inspiration [19]. Also, the intrathoracic 
+pressure causes variation of pulse envelope and a decrease in cardiac output influ-
